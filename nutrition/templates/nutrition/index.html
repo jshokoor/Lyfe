@@ -1,0 +1,144 @@
+{% extends 'nutrition/layout.html' %}
+{% block title %}Daily Diet Totals{% endblock %}
+
+{% block head %}
+    <script type="text/javascript">
+    $( document ).ready(function() {
+        var lineChartData = {}; //declare an object
+        lineChartData.labels = []; //add 'labels' element to object (X axis)
+        lineChartData.datasets = []; //add 'datasets' array element to object
+        var d = new Date();
+        var currentMonth = d.getMonth();
+        var monthSelectedInDropDown;
+        determineIfDropDownHasBeenClicked();
+        function determineIfDropDownHasBeenClicked () {
+            if (monthSelectedInDropDown === null || undefined){
+                //drawGraph(currentMonth);
+            }
+            else {
+                // call draw graph function and pass the month selected via the drop down
+            }
+        };
+
+        for (line = 0; line < 4; line++) {
+            y = [];
+            lineChartData.datasets.push({}); //create a new line dataset
+            dataset = lineChartData.datasets[line];
+            dataset.fillColor = "rgba(0,0,0,0)";
+            dataset.strokeColor = "rgba(200,200,200,1)";
+            dataset.data = []; //contains the 'Y; axis data
+            
+            for (x = 0; x < 30; x++) {
+                y.push(line + x); //push some data aka generate 4 distinct separate lines
+                if (line === 0)
+                    lineChartData.labels.push(x); //adds x axis labels
+            } //for x
+
+            lineChartData.datasets[line].data = y; //send new line data to dataset
+        } //for line
+
+
+        var array_of_averages_per_date = []
+        {% for meal in all_daily_diet_totals %}
+            var selected_date = new Date("{{ meal.date.isoformat }}")
+            console.log(selected_date);
+            array_of_averages_per_date.push({{ meal }});
+
+            //console.log(array_of_averages_per_date);
+        {% endfor %}
+
+        var ctx = document.getElementById("myChart").getContext("2d");
+        var myLineChart = new Chart(ctx).Line(lineChartData);
+
+        {% comment %}
+        var myDropDownOnClickFunction = $('#monthSelectorDropDown').click(function () {
+            console.log("yo baby");
+            console.log(this.href);
+        });
+        {% endcomment %}
+
+        var whichMonthToDisplayFunction = $(function () {
+            $(".dropdown-menu li a").click(function () {
+                $(".btn:first-child").text($(this).text());
+                $(".btn:first-child").val($(this).text());
+                var monthSelectedInDropDown = this.text;
+
+                receiveMonthFromDropDownAndUpdateChart(monthSelectedInDropDown);
+                //console.log(monthSelectedInDropDown);
+            });
+        });
+
+        function receiveMonthFromDropDownAndUpdateChart (selectedMonthFromWhichMonthToDisplayFunction) {
+            if (selectedMonthFromWhichMonthToDisplayFunction === 'January') {
+
+                console.log("i got a string comparison match for January")
+            }
+
+            //console.log(selectedMonthFromWhichMonthToDisplayFunction);
+        };
+
+    });
+    </script>
+{% endblock %}
+
+{% block body %}
+    {% for meal in all_daily_diet_totals %}
+        <p>{{ meal.date }} KCALS: {{ meal.total_KCALS }}</p>
+    {% endfor %}
+    <p>variable above:</p>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-2">
+                <p>Select Month: </p>
+            </div>
+            <div class="col-sm-4">
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="monthSelectorDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        currentMonthVar
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="monthSelectorDropDown">
+                        <li><a class="dropdown-item" id="januaryOption" href="#january">January</a></li>
+                        <li><a class="dropdown-item" id="februaryOption" href="#">February</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <h2>Totals</h2>
+            </div>
+            <div class="col-sm-10">
+                <canvas id="myChart" width="500" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            <h2>Date</h2>
+        </div>
+    </div>
+
+{% if all_daily_diet_totals %}
+    <ul>
+        {% for daily_diet_totals in all_daily_diet_totals %}
+            <li><a href="{% url 'nutrition:detail' daily_diet_totals.id %}">{{ daily_diet_totals.id }}</a></li>
+
+            <!-- Update -->
+            <li><a href="{% url 'nutrition:daily_diet_totals-update' daily_diet_totals.id %}"> Update </a></li>
+
+            <!-- Delete -->
+            <form action="{% url 'nutrition:daily_diet_totals-delete' daily_diet_totals.id %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="daily_diet_totals_id" value="{{ daily_diet_totals.id }}"/>
+                <button type="submit" class="btn btn-default btn-sm">
+                    <i class="fa fa-trash"></i>
+                </button>
+
+            </form>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <h3>You don't have any daily diet totals uploaded.</h3>
+{% endif %}
+
+{% endblock %}

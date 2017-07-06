@@ -1,0 +1,42 @@
+{% extends 'nutrition/layout.html' %}
+{% block title %}Daily Diet Totals{% endblock %}
+
+
+{% block body %}
+
+    {{ dailydiettotals.date }}
+<h3>KCALS: {{ dailydiettotals.total_KCALS }}</h3>
+<h3>Protein: {{ dailydiettotals.total_protein }}</h3>
+
+<h3>List of meals in current Daily Diet Totals</h3>
+<ul>
+    {% for meal in dailydiettotals.meal_set.all %}
+        <li>{{ meal.type_of_meal }}
+            <ul>
+                <li>KCALS: {{ meal.KCALS }}</li>
+            </ul>
+        </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
+
+{% comment %}
+{% if error_message %}
+    <p><strong>{{ error_message }}</strong></p>
+{% endif %}
+
+<form action="{% url 'nutrition:favorite' dailydiettotals.id %}" method="post">
+    {% csrf_token %}
+    {% for meal in dailydiettotals.meal_set.all %}
+        <input type="radio" id="meal{{ forloop.counter }}" name="meal" value="{{ meal.id }}" />
+        <label for="meal{{ forloop.counter }}">
+            {{ meal.type_of_meal }}
+            {% if meal.is_favorite  %}
+                <p><strong>MY FAVORITE MEAL!!!</strong></p>
+            {% endif %}
+        </label>
+    {% endfor %}
+    <input type="submit" value="Favorite">
+</form>
+{% endcomment %}
