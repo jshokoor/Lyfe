@@ -9,7 +9,32 @@
         lineChartData.datasets = []; //add 'datasets' array element to object
         var d = new Date();
         var currentMonth = d.getMonth();
+        var currentYear = d.getYear();
+        var numberOfDaysInCurrentMonth = new Date(currentYear, currentMonth, 0).getDate();
         var monthSelectedInDropDown;
+
+        function drawGraph(numOfDaysInMonthToBeDrawn, currentYearOrYearSelectedInDropDown, arrayOfAverages) {
+            for (line = 0; line < 4; line++) {
+                y = [];
+                lineChartData.datasets.push({}); //create a new line dataset
+                dataset = lineChartData.datasets[line];
+                dataset.fillColor = "rgba(0,0,0,0)";
+                dataset.strokeColor = "rgba(200,200,200,1)";
+                dataset.data = []; //contains the 'Y; axis data
+
+                for (x = 0; x < 30; x++) {
+                    y.push(line + x); //push some data aka generate 4 distinct separate lines
+                    if (line === 0)
+                        lineChartData.labels.push(x); //adds x axis labels
+                } //for x
+
+                lineChartData.datasets[line].data = y; //send new line data to dataset
+            } //for line
+        };
+
+        drawGraph(numberOfDaysInCurrentMonth, currentYear, []);
+
+
         determineIfDropDownHasBeenClicked();
         function determineIfDropDownHasBeenClicked () {
             if (monthSelectedInDropDown === null || undefined){
@@ -20,32 +45,17 @@
             }
         };
 
-        for (line = 0; line < 4; line++) {
-            y = [];
-            lineChartData.datasets.push({}); //create a new line dataset
-            dataset = lineChartData.datasets[line];
-            dataset.fillColor = "rgba(0,0,0,0)";
-            dataset.strokeColor = "rgba(200,200,200,1)";
-            dataset.data = []; //contains the 'Y; axis data
-            
-            for (x = 0; x < 30; x++) {
-                y.push(line + x); //push some data aka generate 4 distinct separate lines
-                if (line === 0)
-                    lineChartData.labels.push(x); //adds x axis labels
-            } //for x
-
-            lineChartData.datasets[line].data = y; //send new line data to dataset
-        } //for line
-
-
         var array_of_averages_per_date = []
         {% for meal in all_daily_diet_totals %}
-            var selected_date = new Date("{{ meal.date.isoformat }}")
+            var newDateString = ("{{ meal.date.isoformat }}") + "T00:00:00";
+            var selected_date = new Date(newDateString);
+
             console.log(selected_date);
             array_of_averages_per_date.push({{ meal }});
-
             //console.log(array_of_averages_per_date);
         {% endfor %}
+
+
 
         var ctx = document.getElementById("myChart").getContext("2d");
         var myLineChart = new Chart(ctx).Line(lineChartData);
@@ -56,15 +66,26 @@
             console.log(this.href);
         });
         {% endcomment %}
-
+        var monthNames = ["January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December"
+        ];
+        var monthPlaceHolderText = document.getElementById("monthSelectorDropDown").innerHTML = monthNames[currentMonth];
         var whichMonthToDisplayFunction = $(function () {
-            $(".dropdown-menu li a").click(function () {
-                $(".btn:first-child").text($(this).text());
-                $(".btn:first-child").val($(this).text());
+            $("#monthDropDownIdentifier li a").click(function () {
+                $("#monthSelectorDropDown").text($(this).text());
+                $("#monthSelectorDropDown").val($(this).text());
                 var monthSelectedInDropDown = this.text;
 
                 receiveMonthFromDropDownAndUpdateChart(monthSelectedInDropDown);
                 //console.log(monthSelectedInDropDown);
+            });
+        });
+
+        var yearPlaceHolderText = document.getElementById("yearSelectorDropDown").innerHTML = d.getFullYear();
+        var whichYearToDisplayFunction = $(function () {
+            $("#yearDropDownIdentifier li a").click(function () {
+                $("#yearSelectorDropDown").text($(this).text());
+                $("#yearSelectordropdown").val($(this).text());
             });
         });
 
@@ -91,14 +112,38 @@
             <div class="col-sm-2">
                 <p>Select Month: </p>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-4" id="monthDropDownIdentifier">
                 <div class="dropdown">
                     <button class="btn btn-default dropdown-toggle" type="button" id="monthSelectorDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        currentMonthVar
+                        <!--Javascript inserts current month text here-->
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="monthSelectorDropDown">
                         <li><a class="dropdown-item" id="januaryOption" href="#january">January</a></li>
                         <li><a class="dropdown-item" id="februaryOption" href="#">February</a></li>
+                        <li><a class="dropdown-item" id="marchOption" href="#">March</a></li>
+                        <li><a class="dropdown-item" id="aprilOption" href="#">April</a></li>
+                        <li><a class="dropdown-item" id="mayOption" href="#">May</a></li>
+                        <li><a class="dropdown-item" id="juneOption" href="#">June</a></li>
+                        <li><a class="dropdown-item" id="julyOption" href="#">July</a></li>
+                        <li><a class="dropdown-item" id="augustOption" href="#">August</a></li>
+                        <li><a class="dropdown-item" id="septemberOption" href="#">September</a></li>
+                        <li><a class="dropdown-item" id="octoberOption" href="#">October</a></li>
+                        <li><a class="dropdown-item" id="novemberOption" href="#">November</a></li>
+                        <li><a class="dropdown-item" id="decemberOption" href="#">December</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <p>Select Year:</p>
+            </div>
+            <div class="col-sm-4" id="yearDropDownIdentifier">
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="yearSelectorDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <!--Javascript inserts year text month here-->
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="yearSelectorDropDown">
+                        <li><a class="dropdown-item" id="2017OptionOnDropDown" href="#">2017</a> </li>
+                        <li><a class="dropdown-item" id="2018OptionOnDropDown" href="#">2018</a> </li>
                     </ul>
                 </div>
             </div>

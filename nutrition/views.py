@@ -23,6 +23,7 @@ class IndexView(generic.ListView):
             array_of_averages_per_date.append(newVariable)
         return newVariable
 
+
 class DetailView(generic.DetailView):
     model = DailyDietTotals
     template_name = 'nutrition/detail.html'
@@ -30,12 +31,12 @@ class DetailView(generic.DetailView):
 
 class DailyDietTotalsCreate(CreateView):
     model = DailyDietTotals
-    fields = ['total_KCALS', 'total_protein', 'total_carbs', 'total_fat']
+    fields = ['date', 'total_KCALS', 'total_protein', 'total_carbs', 'total_fat']
 
 
 class DailyDietTotalsUpdate(UpdateView):
     model = DailyDietTotals
-    fields = ['total_KCALS', 'total_protein', 'total_carbs', 'total_fat']
+    fields = ['date', 'total_KCALS', 'total_protein', 'total_carbs', 'total_fat']
 
 
 class DailyDietTotalsDelete(DeleteView):

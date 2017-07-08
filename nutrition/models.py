@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 
 
 class DailyDietTotals(models.Model):
-    date = models.DateField(auto_now=False, auto_now_add=True)
+    date = models.DateField(auto_now=False, auto_now_add=False)
     total_KCALS = models.IntegerField(default=0)
     total_protein = models.IntegerField(default=0)
     total_carbs = models.IntegerField(default=0)
