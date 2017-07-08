@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6a778e49-a24b-4f52-9ad8-f09659d88139" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="$PROJECT_DIR$/db.sqlite3" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nutrition/models.py" afterPath="$PROJECT_DIR$/nutrition/models.py" />
+    <list default="true" id="6a778e49-a24b-4f52-9ad8-f09659d88139" name="Default" comment="Test Pycharm &#10;Use Pycharm commit tool">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nutrition/templates/nutrition/index.html" afterPath="$PROJECT_DIR$/nutrition/templates/nutrition/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nutrition/views.py" afterPath="$PROJECT_DIR$/nutrition/views.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -57,7 +54,7 @@
         <entry file="file://$PROJECT_DIR$/nutrition/views.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="459">
-              <caret line="30" column="0" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+              <caret line="30" column="0" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
@@ -68,8 +65,8 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/nutrition/templates/nutrition/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="48">
-              <caret line="67" column="24" lean-forward="true" selection-start-line="67" selection-start-column="24" selection-end-line="67" selection-end-column="24" />
+            <state relative-caret-position="167">
+              <caret line="68" column="32" lean-forward="false" selection-start-line="68" selection-start-column="32" selection-end-line="68" selection-end-column="32" />
               <folding />
             </state>
           </provider>
@@ -525,6 +522,9 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <option name="LAST_COMMIT_MESSAGE" value="" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
     <watches-manager />
@@ -829,7 +829,7 @@
     <entry file="file://$PROJECT_DIR$/nutrition/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="459">
-          <caret line="30" column="0" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+          <caret line="30" column="0" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
           </folding>
@@ -862,8 +862,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/nutrition/templates/nutrition/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="48">
-          <caret line="67" column="24" lean-forward="true" selection-start-line="67" selection-start-column="24" selection-end-line="67" selection-end-column="24" />
+        <state relative-caret-position="167">
+          <caret line="68" column="32" lean-forward="false" selection-start-line="68" selection-start-column="32" selection-end-line="68" selection-end-column="32" />
           <folding />
         </state>
       </provider>
