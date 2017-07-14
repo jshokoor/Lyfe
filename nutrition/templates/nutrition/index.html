@@ -133,9 +133,6 @@
 {% endblock %}
 
 {% block body %}
-    {% for meal in all_daily_diet_totals %}
-        <p>{{ meal.date }} KCALS: {{ meal.total_KCALS }}, P: {{ meal.total_protein }}, C: {{ meal.total_carbs }}, F: {{ meal.total_fat }}</p>
-    {% endfor %}
     <p>variable above:</p>
     <div class="container-fluid">
         <div class="row">
