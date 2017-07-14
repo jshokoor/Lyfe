@@ -16,13 +16,6 @@ class IndexView(generic.ListView):
         context['daily_diet_totals'] = [0,1,2,3]
         return context
 
-    def organize_data(self):
-        array_of_averages_per_date = []
-        newVariable = 4
-        for meal in DailyDietTotals:
-            array_of_averages_per_date.append(newVariable)
-        return newVariable
-
 
 class DetailView(generic.DetailView):
     model = DailyDietTotals

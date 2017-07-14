@@ -4,74 +4,89 @@
 {% block head %}
     <script type="text/javascript">
     $( document ).ready(function() {
-        var lineChartData = {}; //declare an object
-        lineChartData.labels = []; //add 'labels' element to object (X axis)
-        lineChartData.datasets = []; //add 'datasets' array element to object
         var d = new Date();
-        var currentMonth = d.getMonth();
-        var currentYear = d.getYear();
-        var numberOfDaysInCurrentMonth = new Date(currentYear, currentMonth, 0).getDate();
+        var currentWorkingMonth = d.getMonth();
+        var currentWorkingYear = d.getFullYear();
+        var numberOfDaysInCurrentMonth = new Date(currentWorkingYear, currentWorkingMonth + 1, 0).getDate();
+        console.log(numberOfDaysInCurrentMonth);
         var monthSelectedInDropDown;
 
-        function drawGraph(numOfDaysInMonthToBeDrawn, currentYearOrYearSelectedInDropDown, arrayOfAverages) {
+        //function below as a variable because it relies on global variables to be defined
+        var drawGraph = function (lineChartDataObject, numOfDaysInMonthToBeDrawn, currentYearOrYearSelectedInDropDown, arrayOfData) {
+            lineChartDataObject.labels = []; //add 'labels' element to object (X axis)
+            lineChartDataObject.datasets = []; //add 'datasets' array element to object
+
+            //need to iterate through lineChartDataObject and reset all it's labels: [] to be empty
             for (line = 0; line < 4; line++) {
                 y = [];
-                lineChartData.datasets.push({}); //create a new line dataset
-                dataset = lineChartData.datasets[line];
-                dataset.fillColor = "rgba(0,0,0,0)";
-                dataset.strokeColor = "rgba(200,200,200,1)";
+                lineChartDataObject.datasets.push({}); //create a new line dataset
+                dataset = lineChartDataObject.datasets[line];
+                if (line === 0) {
+                    dataset.fillColor = "rgba(255,0,0,0)";
+                    dataset.strokeColor = "rgba(255,0,0,1)";
+                }
+                else if (line === 1) {
+                    dataset.fillColor = "rgba(0,255,0,0)";
+                    dataset.strokeColor = "rgba(0,255,0,1)";
+                }
+                else if (line === 2) {
+                    dataset.fillColor = "rgba(0,0,255,0)";
+                    dataset.strokeColor = "rgba(0,0,255,1)";
+                }
+                else if (line === 3) {
+                    dataset.fillColor = "rgba(255,0,255,0)";
+                    dataset.strokeColor = "rgba(255,0,255,1)";
+                }
                 dataset.data = []; //contains the 'Y; axis data
 
-                for (x = 0; x < 30; x++) {
-                    y.push(line + x); //push some data aka generate 4 distinct separate lines
-                    if (line === 0)
-                        lineChartData.labels.push(x); //adds x axis labels
+                for (x = 1; x < numOfDaysInMonthToBeDrawn + 1; x++) {
+                    console.log(arrayOfData[0][currentWorkingMonth][x-1]);
+                    y.push(arrayOfData[0][currentWorkingMonth][x-1][line]);
+                    //y.push(line + x); //push some data aka generate 4 distinct separate lines
+
+                    if (line === 0) {
+                        lineChartDataObject.labels.push(x); //adds x axis labels
+                    }
+
                 } //for x
 
-                lineChartData.datasets[line].data = y; //send new line data to dataset
+                lineChartDataObject.datasets[line].data = y; //send new line data to dataset
             } //for line
+
+            var ctx = document.getElementById("myChart").getContext("2d");
+            var myLineChart = new Chart(ctx).Line(lineChartDataObject);
         };
 
-        drawGraph(numberOfDaysInCurrentMonth, currentYear, []);
-
-
-        determineIfDropDownHasBeenClicked();
-        function determineIfDropDownHasBeenClicked () {
-            if (monthSelectedInDropDown === null || undefined){
-                //drawGraph(currentMonth);
+        var arrayOfDataOrganizedByYearAndMonth = [[ [], [], [], [], [], [], [], [], [], [], [], [] ]];
+        for (x=0; x<arrayOfDataOrganizedByYearAndMonth[0].length; x++) {
+            var numOfDaysInMonthForCreatingArrayOfData = new Date(2017, x+1, 0).getDate();
+            for (j=0; j<numOfDaysInMonthForCreatingArrayOfData; j++) {
+                arrayOfDataOrganizedByYearAndMonth[0][x].push([null,null,null,null]);
             }
-            else {
-                // call draw graph function and pass the month selected via the drop down
-            }
-        };
+        }
 
-        var array_of_averages_per_date = []
-        {% for meal in all_daily_diet_totals %}
-            var newDateString = ("{{ meal.date.isoformat }}") + "T00:00:00";
-            var selected_date = new Date(newDateString);
-
-            console.log(selected_date);
-            array_of_averages_per_date.push({{ meal }});
-            //console.log(array_of_averages_per_date);
+        {% for entry in all_daily_diet_totals %}
+            var newDateString = ("{{ entry.date.isoformat }}") + "T00:00:00";
+            var javascriptDateObjectOfCurrentEntry = new Date(newDateString);
+            var dayOfTheMonthOfCurrentEntry = javascriptDateObjectOfCurrentEntry.getUTCDate();
+            var monthOfCurrentEntry = javascriptDateObjectOfCurrentEntry.getMonth();
+            console.log(monthOfCurrentEntry);
+            var totalKcalsFromModel = {{ entry.total_KCALS }};
+            var totalKcalsFromModelDividedByTen = totalKcalsFromModel/10;
+            //(dayOfTheMonthOfCurrentEntry - 1) below because array to be populated is 0 indexed and the value being used goes from 1-(last day of month)
+            arrayOfDataOrganizedByYearAndMonth[0][monthOfCurrentEntry][dayOfTheMonthOfCurrentEntry-1][0] = totalKcalsFromModelDividedByTen;
+            arrayOfDataOrganizedByYearAndMonth[0][monthOfCurrentEntry][dayOfTheMonthOfCurrentEntry-1][1] = {{ entry.total_protein }};
+            arrayOfDataOrganizedByYearAndMonth[0][monthOfCurrentEntry][dayOfTheMonthOfCurrentEntry-1][2] = {{ entry.total_carbs }};
+            arrayOfDataOrganizedByYearAndMonth[0][monthOfCurrentEntry][dayOfTheMonthOfCurrentEntry-1][3] = {{ entry.total_fat }};
         {% endfor %}
 
 
+        drawGraph({}, numberOfDaysInCurrentMonth, currentWorkingYear, arrayOfDataOrganizedByYearAndMonth);
 
-        var ctx = document.getElementById("myChart").getContext("2d");
-        var myLineChart = new Chart(ctx).Line(lineChartData);
-
-        {% comment %}
-        var myDropDownOnClickFunction = $('#monthSelectorDropDown').click(function () {
-            console.log("yo baby");
-            console.log(this.href);
-        });
-        {% endcomment %}
-
-        //commit to signify local repo is now .../documents/GitHub/website
         var monthNames = ["January", "February", "March", "April", "May", "June",
           "July", "August", "September", "October", "November", "December"
         ];
-        var monthPlaceHolderText = document.getElementById("monthSelectorDropDown").innerHTML = monthNames[currentMonth];
+        var monthPlaceHolderText = document.getElementById("monthSelectorDropDown").innerHTML = monthNames[currentWorkingMonth]; //inject text of the current year into HTML button
         var whichMonthToDisplayFunction = $(function () {
             $("#monthDropDownIdentifier li a").click(function () {
                 $("#monthSelectorDropDown").text($(this).text());
@@ -88,16 +103,29 @@
             $("#yearDropDownIdentifier li a").click(function () {
                 $("#yearSelectorDropDown").text($(this).text());
                 $("#yearSelectordropdown").val($(this).text());
+
+                receiveYearFromDropDownAndUpdateChart(this.text);
             });
         });
 
         function receiveMonthFromDropDownAndUpdateChart (selectedMonthFromWhichMonthToDisplayFunction) {
-            if (selectedMonthFromWhichMonthToDisplayFunction === 'January') {
-
-                console.log("i got a string comparison match for January")
+            var numOfDaysInSelectedMonth;
+            for (x=0; x< monthNames.length; x++) {
+                if (selectedMonthFromWhichMonthToDisplayFunction == monthNames[x]) {
+                    currentWorkingMonth = x;
+                    numOfDaysInSelectedMonth = new Date(currentWorkingYear, x+1, 0).getDate();
+                    drawGraph({}, numOfDaysInSelectedMonth, currentWorkingYear, arrayOfDataOrganizedByYearAndMonth);
+                }
             }
+        };
 
-            //console.log(selectedMonthFromWhichMonthToDisplayFunction);
+        function receiveYearFromDropDownAndUpdateChart (selectedYearFromWhichYearToDisplayFunction) {
+            //console.log(selectedYearFromWhichYearToDisplayFunction);
+            var yearAsInt = parseInt(selectedYearFromWhichYearToDisplayFunction);
+            currentWorkingYear = yearAsInt;
+            var numOfDaysInSelectedMonth = new Date(yearAsInt, currentWorkingMonth + 1, 0).getDate();
+            console.log(numOfDaysInSelectedMonth);
+            drawGraph({}, numOfDaysInSelectedMonth, yearAsInt, []);
         };
 
     });
@@ -106,7 +134,7 @@
 
 {% block body %}
     {% for meal in all_daily_diet_totals %}
-        <p>{{ meal.date }} KCALS: {{ meal.total_KCALS }}</p>
+        <p>{{ meal.date }} KCALS: {{ meal.total_KCALS }}, P: {{ meal.total_protein }}, C: {{ meal.total_carbs }}, F: {{ meal.total_fat }}</p>
     {% endfor %}
     <p>variable above:</p>
     <div class="container-fluid">
@@ -155,7 +183,7 @@
                 <h2>Totals</h2>
             </div>
             <div class="col-sm-10">
-                <canvas id="myChart" width="500" height="300"></canvas>
+                <canvas id="myChart" width="800" height="500"></canvas>
             </div>
         </div>
     </div>
