@@ -1,2 +1,2 @@
 # Lyfe
-Publish django web-app Lyfe.
+Nutritional motivational tool.
